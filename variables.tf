@@ -13,3 +13,9 @@ variable "GKE_NUM_NODES" {
   default     = 2
   description = "GKE nodes number"
 }
+
+variable "DELETION_PROTECTION" {
+  type        = bool
+  default     = true
+  description = "Enable GKE deletion protection"
+}
