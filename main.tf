@@ -1,45 +1,30 @@
-terraform {
-  backend "gcs" {
-    bucket = "tf-state-gke-kseniia"
-    prefix = "terraform/state"
-  }
+module "github_repository" {
+  source                   = "./modules/tf-github-repository"
+  github_owner             = var.GITHUB_OWNER
+  github_token             = var.GITHUB_TOKEN
+  repository_name          = var.FLUX_GITHUB_REPO
+  public_key_openssh       = module.tls_private_key.public_key_openssh
+  public_key_openssh_title = "flux0"
 }
 
 module "gke_cluster" {
-  source              = "github.com/KseniiaEvans/tf-google-gke-cluster"
+  source              = "./modules/tf-google-gke-cluster"
   GOOGLE_REGION       = var.GOOGLE_REGION
   GOOGLE_PROJECT      = var.GOOGLE_PROJECT
   GKE_NUM_NODES       = var.GKE_NUM_NODES
   DELETION_PROTECTION = false
 }
 
-module "tls_keys" {
-  source = "./modules/tls_keys"
-}
-
-module "gitops_repo" {
-  source                   = "./modules/github_repository"
-  github_owner             = var.GITHUB_OWNER
-  github_token             = var.GITHUB_TOKEN
-  repository_name          = var.FLUX_GITOPS_REPO
-  repository_visibility    = "private"
-  branch                   = "main"
-  public_key_openssh       = module.tls_keys.public_key_openssh
-  public_key_openssh_title = "flux"
+module "tls_private_key" {
+  source    = "./modules/tf-hashicorp-tls-keys"
+  algorithm = "RSA"
 }
 
 module "flux_bootstrap" {
-  source           = "./modules/flux_bootstrap"
-  github_token     = var.GITHUB_TOKEN
-  github_repository = "${var.GITHUB_OWNER}/${module.gitops_repo.repository_name}"
-
-  # Flux підключається по SSH (deploy key у repo)
-  git_ssh_private_key_pem = module.tls_keys.private_key_pem
-  git_ssh_username        = "git"
-
-  # kubeconfig з твого gke module auth
-  kubeconfig_path = module.gke_cluster.kubeconfig
-
-  # куди комітити flux manifests у GitOps repo:
-  target_path = "clusters/gke"
+  source            = "./modules/tf-fluxcd-flux-bootstrap"
+  github_repository = "${var.GITHUB_OWNER}/${var.FLUX_GITHUB_REPO}"
+  github_token      = var.GITHUB_TOKEN
+  private_key       = module.tls_private_key.private_key_pem
+  config_path       = local_file.kubeconfig.filename
+  target_path       = var.FLUX_GITHUB_TARGET_PATH
 }
