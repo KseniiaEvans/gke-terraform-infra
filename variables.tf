@@ -57,7 +57,7 @@ variable "FLUX_GITHUB_TARGET_PATH" {
 
 variable "DELETION_PROTECTION" {
   type        = bool
-  default     = true
+  default     = false
   description = "Enable GKE deletion protection"
 }
 
