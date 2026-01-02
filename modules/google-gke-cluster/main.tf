@@ -21,7 +21,7 @@ resource "google_container_cluster" "this" {
 
   # GKE location can be either region (regional cluster) or zone (zonal cluster),
   # e.g. "europe-central2" or "europe-central2-a"
-  location = var.GOOGLE_REGION
+  location = var.GKE_LOCATION
 
   # Enable/disable deletion protection via variable
   deletion_protection = var.DELETION_PROTECTION

@@ -5,9 +5,14 @@ variable "GOOGLE_PROJECT" {
 
 variable "GOOGLE_REGION" {
   type        = string
-  default     = "europe-west1"
-  description = "GCP region to use"
+  description = "GCP region (e.g. europe-west1)"
 }
+
+variable "GKE_LOCATION" {
+  type        = string
+  description = "GKE location (region or zone, e.g. europe-west1-b)"
+}
+
 
 variable "GKE_MACHINE_TYPE" {
   type        = string

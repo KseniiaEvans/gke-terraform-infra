@@ -9,6 +9,11 @@ variable "GOOGLE_REGION" {
   description = "GCP region to use"
 }
 
+variable "GKE_LOCATION" {
+  type        = string
+  description = "GCP region to use"
+}
+
 variable "GKE_MACHINE_TYPE" {
   type        = string
   default     = "g1-small"

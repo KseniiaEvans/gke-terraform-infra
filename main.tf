@@ -10,6 +10,7 @@ module "github_repository" {
 module "gke_cluster" {
   source              = "./modules/google-gke-cluster"
   GOOGLE_REGION       = var.GOOGLE_REGION
+  GKE_LOCATION        = var.GKE_LOCATION
   GOOGLE_PROJECT      = var.GOOGLE_PROJECT
   GKE_NUM_NODES       = var.GKE_NUM_NODES
   DELETION_PROTECTION = var.DELETION_PROTECTION
